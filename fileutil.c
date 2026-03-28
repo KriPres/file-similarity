@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include "fileutil.h"
 
+
+
 void filelist_init(FileList *list) {
     list->count = 0;
     list->capacity = 8;
@@ -43,10 +45,15 @@ void traverse_directory(char *path, const char *suffix, FileList *list) {
     }
 
     int path_len = strlen(path);
+
+    if (path_len > 1 && path[path_len - 1] == '/') {
+        path_len--;
+    }
+
     struct dirent *de;
 
     while ((de = readdir(dir))) {
-        // skips "." and ".." and any hidden files/dirs — prevents infinite recursion too
+        // skips "." and ".." and any hidden files/dirs and prevents infinite recursion
         if (de->d_name[0] == '.') continue;
 
         int name_len = strlen(de->d_name);
@@ -87,7 +94,7 @@ void collect_files(int argc, char *argv[], FileList *list, const char *suffix) {
         if (S_ISDIR(sb.st_mode)) {
             traverse_directory(argv[i], suffix, list);
         } else if (S_ISREG(sb.st_mode)) {
-            // explicitly given — no suffix check
+            // no extension (suffix) check
             filelist_add(list, argv[i]);
         }
     }
