@@ -5,8 +5,6 @@
 #include <sys/stat.h>
 #include "fileutil.h"
 
-
-
 void filelist_init(FileList *list) {
     list->count = 0;
     list->capacity = 8;
